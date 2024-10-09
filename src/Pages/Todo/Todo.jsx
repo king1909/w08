@@ -8,6 +8,8 @@ function Todo() {
 
 const [todosRaw, setTodosRaw] = useState([])  
     //filters
+const [onlywaiting, setOnlywaiting] = useState(false)
+
     
 //todos
 const [todos, setTodos] = useState([])
@@ -15,6 +17,10 @@ const [todos, setTodos] = useState([])
     useEffect(() => {
         setTodosRaw(fetchTodos())
     }, []) //load
+
+    useEffect(() => {
+        console.log('', )
+    }, [onlywaiting])
 
     useEffect(() => {
         console.log(todosRaw)
@@ -31,7 +37,8 @@ const [todos, setTodos] = useState([])
                 </label>
             </div>
             <div className="form-check">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked/>
+                <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked
+                />
                 <label className="form-check-label" htmlFor="flexCheckChecked">
                     Checked checkbox
                 </label>
