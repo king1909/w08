@@ -90,6 +90,14 @@ const [todos, setTodos] = useState([])
         </tbody>
             
             {/* page control */}
+
+            <div>
+                <button className='btn btn-outline-primary todo-spacing' >first</button>
+                <button className='btn btn-outline-primary todo-spacing'>prev</button>
+                <span className='todo-spacing'>1&nbsp;/&nbsp;5</span>
+                <button className='btn btn-outline-primary todo-spacing'>next</button>
+                <button className='btn btn-outline-primary todo-spacing'>last</button>
+            </div>
        
         </div>
         

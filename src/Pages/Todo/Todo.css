@@ -1,5 +1,5 @@
 .todo-container{
-    border: 1px solid;
+    /* border: 1px solid; */
     height: 640px;
 }
 .todo-filters-container{
@@ -7,4 +7,7 @@
     justify-content: space-between;
     align-items: center;
     
+}
+.todo-spacing{
+    margin: 0 0.5rem;
 }
