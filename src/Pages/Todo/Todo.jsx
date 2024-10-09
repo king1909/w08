@@ -10,7 +10,13 @@ const [todosRaw, setTodosRaw] = useState([])
     //filters
 const [onlywaiting, setOnlywaiting] = useState(false)
 
+const [numPage, setNumpage] = useState(0)
+
     
+useEffect(() => {
+    setNumpage(Math.ceil(todos.length / itemsPerPage))
+}, [itemsPerPage, todos.length])
+
 //todos
 const [todos, setTodos] = useState([])
 
@@ -48,7 +54,7 @@ const [todos, setTodos] = useState([])
             <div className="form-floating">
   <select className="form-select" id="floatingSelect" aria-label="Floating label select example">
     
-    <option value={5}>5 items per page</option>
+    <option value={5}> 5 items per page{numPage}</option>
     <option value={10}>10 items per page</option>
     <option value={50}>50 items per page</option>
     <option value={100}>100 items per page</option>
@@ -99,11 +105,15 @@ const [todos, setTodos] = useState([])
             {/* page control */}
 
             <div>
-                <button className='btn btn-outline-primary todo-spacing' >first</button>
-                <button className='btn btn-outline-primary todo-spacing'>prev</button>
-                <span className='todo-spacing'>1&nbsp;/&nbsp;5</span>
-                <button className='btn btn-outline-primary todo-spacing'>next</button>
-                <button className='btn btn-outline-primary todo-spacing'>last</button>
+                <button className='btn btn-outline-primary todo-spacing' >
+                   onClick={() => {setCurPage(1)}} first</button>
+                <button className='btn btn-outline-primary todo-spacing'>
+                   onClick={() => {curPage > 1 && setCurPage(curPage - 1)}} previous</button>
+                <span className='todo-spacing'>{curPages}&nbsp;/&nbsp;{numPages}</span>
+                <button className='btn btn-outline-primary todo-spacing'>
+                   onClick={() => {curPage < numPages && setCurPage(curPage + 1)}} next</button>
+                <button className='btn btn-outline-primary todo-spacing'>
+                   onClick={() => {setCurPage(numPages)}} last</button>
             </div>
        
         </div>
