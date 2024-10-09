@@ -1,0 +1,21 @@
+.home-container{
+    border: 1px solid;
+    border-radius: 0.5rem;
+    height: 640px;
+    text-align: center;
+    padding: 0.5rem;
+    background-image: url('../public/background.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.img-container{
+    width: 200px;
+    height: 200px;
+    border: 1px solid;
+    border-radius:9rem;
+    margin-left: 3rem;
+    background-image: url('../public/Human.png');
+    background-size: cover;
+    background-position: center;
+}

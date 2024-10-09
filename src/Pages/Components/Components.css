@@ -1,0 +1,17 @@
+.component-container{
+    border: 1px solid;
+    border-radius: 0.5rem;
+    height: 640px;
+    text-align: center;
+    padding: 0.5rem;
+    background-image: url('../public/background.png');
+    background-size: cover;
+    background-position: center;
+}
+
+
+.component-container-1{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.5rem;
+}
