@@ -1220,5 +1220,5 @@ const todos = [
 ];
 
 export function fetchTodos(){
-  return todos.slice(0, 13)
+  return todos[0].slice(0, 13); // ดึงข้อมูลออกมาจากอาร์เรย์ชั้นใน
 }

@@ -1,124 +1,202 @@
-import { useEffect, useState } from 'react';
-import { fetchTodos } from '../../data/todo';
+import { useState, useEffect, useRef } from 'react'
+import { fetchTodos } from '../../data/todos'
+
 import './Todo.css'
 
+const initItemsPerPage = 5
+const initOnlyWaiting = false
+
 function Todo() {
-    //todosRaw -> filters -> todos-> display
-    //read todosRaw
+  // todosRaw -> filters -> todos -> display
+  //todoRaw
+  const [todosRaw, setTodosRaw] = useState([])
+  //filter
+  const [onlyWaiting, setOnlyWaiting] = useState(false)
+  const [itemsPerPage, setItemsPerPage] = useState(0)
+  //todos
+  const [todos, setTodos] = useState([])
+  //display
+  const [numPages, setNumPages] = useState(0)
+  const [curPage, setCurPage] = useState(0)
 
-const [todosRaw, setTodosRaw] = useState([])  
-    //filters
-const [onlywaiting, setOnlywaiting] = useState(false)
+  const itemsPerPageRef = useRef()
+  const onlyWaitingRef = useRef()
 
-const [numPage, setNumpage] = useState(0)
+  useEffect(() => {
+    const todosData = fetchTodos();
+    console.log(todosData); // ตรวจสอบข้อมูลที่ดึงออกมา 
+    setTodosRaw(todosData);
+    setOnlyWaiting(initOnlyWaiting);
+    itemsPerPageRef.current.value = initItemsPerPage;
+    setItemsPerPage(initItemsPerPage);
+    onlyWaitingRef.current.checked = initOnlyWaiting;
+  }, []);
 
-    
-useEffect(() => {
-    setNumpage(Math.ceil(todos.length / itemsPerPage))
-}, [itemsPerPage, todos.length])
+  useEffect(() => {
+    if (onlyWaiting) {
+      setTodos(todosRaw.filter((todo) => !todo.completed))
+    } else {
+      setTodos(todosRaw)
+    }
+  }, [todosRaw, onlyWaiting])
 
-//todos
-const [todos, setTodos] = useState([])
+  useEffect(() => {
+    setNumPages(Math.ceil(todos.length / itemsPerPage))
+  }, [todos, itemsPerPage])
 
-    useEffect(() => {
-        setTodosRaw(fetchTodos())
-    }, []) //load
+  useEffect(() => {
+    if (numPages <= 0) setCurPage(0)
+    else if (curPage === 0) setCurPage(1)
+    else if (curPage > numPages) setCurPage(numPages)
+  }, [numPages])
 
-    useEffect(() => {
-        console.log('', )
-    }, [onlywaiting])
+  //consoleแสดงสเตจที่ถูกเปลื่ยน setหน้าที่เลือก
+  useEffect(() => {
+    console.log('itemsPerPage: ',itemsPerPage)
+  }, [itemsPerPage])
 
-    useEffect(() => {
-        console.log(todosRaw)
-    }, [todosRaw])//ตรวจสอบข้อมูล หลังโหลด passfilters
 
-    return ( 
-        <div className='todo-container'>
-            <h1>TODO</h1>
-            <div></div>
-            <div className="form-check">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                <label className="form-check-label" htmlFor="flexCheckDefault">
-                    Default checkbox
-                </label>
-            </div>
-            <div className="form-check">
-                <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked
-                />
-                <label className="form-check-label" htmlFor="flexCheckChecked">
-                    Checked checkbox
-                </label>
-            </div>
-            
-
-            <div className="form-floating">
-  <select className="form-select" id="floatingSelect" aria-label="Floating label select example">
-    
-    <option value={5}> 5 items per page{numPage}</option>
-    <option value={10}>10 items per page</option>
-    <option value={50}>50 items per page</option>
-    <option value={100}>100 items per page</option>
-  </select>
-</div>  
-
-        <table className='table'>
-            <thead className='table-dark'>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th style={{textAlign: 'right'}}>completed</th>
-                </tr>
-            </thead>
-        </table>
-        <tbody>
-            <tr>
-            <td><span className='badge bg-secondary'></span>1</td>
-            <td style={{textAlign: 'left'}}>ตั้งใจ</td>
-            <td style={{textAlign: 'right'}} >
-                <span className="badge bg-warning">
-                    waiting&nbsp;
-                    <span className='bi bi-clock'> </span>
-                    </span>
-                    &nbsp;
-                    </td>
-                
-                <span className='bi bi-clock'> </span>
-            </tr>
-
-            <tr>
-            <td>1</td>
-            <td>ตั้งใจ</td>
-            <td style={{textAlign: 'right'}} >ยังไม่</td>
-            </tr>
-
-            {todos.map((todo) => {
-                return(
-                <tr key={todo.id}>
-                    <td>{todo.id}</td>
-                    <td>{todo.title}</td>
-                    <td style={{textAlign: 'right'}}>{todo.completed ? 'yes' : 'no'}</td>
-                </tr>
-            )})} 
-
-        </tbody>
-            
-            {/* page control */}
-
-            <div>
-                <button className='btn btn-outline-primary todo-spacing' >
-                   onClick={() => {setCurPage(1)}} first</button>
-                <button className='btn btn-outline-primary todo-spacing'>
-                   onClick={() => {curPage > 1 && setCurPage(curPage - 1)}} previous</button>
-                <span className='todo-spacing'>{curPages}&nbsp;/&nbsp;{numPages}</span>
-                <button className='btn btn-outline-primary todo-spacing'>
-                   onClick={() => {curPage < numPages && setCurPage(curPage + 1)}} next</button>
-                <button className='btn btn-outline-primary todo-spacing'>
-                   onClick={() => {setCurPage(numPages)}} last</button>
-            </div>
-       
+  return (
+    <div className='todo-container'>
+{/* filters */}
+      <div className='todo-filters-container'>
+        <div className='form-check form-switch'>
+          <input
+            className='form-check-input'
+            type='checkbox'
+            role='switch'
+            id='flexSwitchCheckChecked'
+            // checked
+            onChange={(e) => {
+              setOnlyWaiting(e.target.checked)
+            }}
+            ref={onlyWaitingRef}
+          />
+          <label className='form-check-label' htmlFor='flexSwitchCheckChecked'>
+            Show only waiting
+          </label>
         </div>
-        
-     );
+        <select
+          className='form-select'
+          aria-label='Default select example'
+          defaultValue={5}
+          style={{ width: '200px' }}
+          onChange={(e) => {
+            /* console.log(e.target.value) */
+            setItemsPerPage(e.target.value)
+          }}
+          ref={itemsPerPageRef}
+        >
+          <option value={5}>5 items per page</option>
+          <option value={10}>10 items per page</option>
+          <option value={50}>50 items per page</option>
+          <option value={100}>100 items per page</option>
+        </select>
+      </div>
+
+{/* table */}
+      <table className='table table-striped todo-table'>
+        <thead className='table-dark'>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th style={{ textAlign: 'right' }}>Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          {todos.map((todo) => {
+            return (
+              <tr key={todo.id}>
+                <td>
+                  <span
+                    className='badge bg-secondary'
+                    style={{ width: '2rem' }}
+                  >
+                    {todo.id}
+                  </span>
+                </td>
+                <td style={{ textAlign: 'left' }}>{todo.title}</td>
+                <td style={{ textAlign: 'right' }}>
+              {/* ส่วน done waiting trash */}
+                  {todo.completed ? (
+                    <span className='badge bg-success'>
+                      done&nbsp;
+                      <span className='bi bi-check'></span>
+                    </span>
+                  ) : (
+                    <button className='btn btn-warning'>
+                      waiting&nbsp;
+                      <span className='bi bi-clock'></span>
+                    </button>
+                  )}
+                  &nbsp;
+                  <button className='btn btn-danger'>
+                    <span className='bi bi-trash'></span>
+                  </button>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+
+{/* page control */}
+      <div>
+        <button
+          className={
+            'todo-space btn ' +
+            (curPage <= 1 ? 'btn-outline-secondary' : 'btn-outline-primary')
+          }
+          onClick={() => {
+            setCurPage(1)
+          }}
+          disabled={curPage <= 1}
+        >
+          First
+        </button>
+        <button
+          className={
+            'todo-space btn ' +
+            (curPage <= 1 ? 'btn-outline-secondary' : 'btn-outline-primary')
+          }
+          onClick={() => curPage > 1 && setCurPage(curPage - 1)}
+          disabled={curPage <= 1}
+        >
+          Previous
+        </button>
+        <span className='todo-space'>
+          {curPage}&nbsp;/&nbsp;{numPages}
+        </span>
+        <button
+          className={
+            'todo-space btn ' +
+            (curPage >= numPages
+              ? 'btn-outline-secondary'
+              : 'btn-outline-primary')
+          }
+          onClick={() => curPage < numPages && setCurPage(curPage + 1)}
+          disabled={curPage >= numPages}
+        >
+          Next
+        </button>
+        <button
+          className={
+            'todo-space btn ' +
+            (curPage >= numPages
+              ? 'btn-outline-secondary'
+              : 'btn-outline-primary')
+          }
+          onClick={() => {
+            setCurPage(numPages)
+          }}
+          disabled={curPage >= numPages}
+        >
+          Last
+        </button>
+      </div>
+    </div>
+  )
 }
 
-export default Todo;
+export default Todo

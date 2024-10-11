@@ -5,7 +5,7 @@ function Home() {
         <div className='home-container'>
             <h1>Introduce your self</h1>
 
-            <div className='img-container'></div>
+            {/* <div className='img-container'></div> */}
             
         </div>
      );
