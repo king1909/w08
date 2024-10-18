@@ -17,6 +17,10 @@ function Navber({ tab, setTab }) {
       </button>
       </Link>
 
+      {/* เปิดปิด ฟังก์ฟันตาทRole
+        {role !== 'user' &&(
+
+        )} */}
     {/* สร้างปุ่ม calculator */}
       <Link to = {'/calculator'}>
       <button className={
@@ -66,6 +70,8 @@ function Navber({ tab, setTab }) {
       >Carts
       </button>
       </Link>
+
+      <button className="btn btn-danger" style={{marginLeft: '1rem'}} >Logout</button>
 
 
     </div>
