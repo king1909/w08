@@ -17,6 +17,10 @@ function Navber({ tab, setTab }) {
       </button>
       </Link>
 
+      {/* เปิดปิด ฟังก์ฟันตาทRole
+        {role !== 'user' &&(
+
+        )} */}
     {/* สร้างปุ่ม calculator */}
       <Link to = {'/calculator'}>
       <button className={
