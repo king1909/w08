@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 
 import Home from "./Pages/Home/Home";
 import Calculator from "./Pages/Calculator/Calculator";
+import Animation from "./Pages/Animation/Animation";
 import Components from "./Pages/Components/Components";
 import Todo from "./Pages/Todo/Todo";
 import Products from "./Pages/Products/Products";
+
 
 import Layout from "./layouts/Layout/Layout";
 
@@ -44,6 +46,7 @@ function App() {
             {/* Route ไปยังหน้าต่างๆและแสดง */}
             <Route path = {'/home'} element={<Home />} />
             <Route path = {'/calculator'} element={<Calculator/>} />
+            <Route path = {'/Animation'} element = {<Animation/>} />
             <Route path = {'/components'} element = {<Components/>} />
             <Route path = {'/todo'} element={<Todo />} />
             <Route path = {'/products'} element = {<Products/>} />

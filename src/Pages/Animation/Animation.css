@@ -1,0 +1,39 @@
+#container {
+    border: 1px solid black;
+    width: fit-content;
+    margin: 10px auto;
+    border-radius: 5px;
+  }
+  
+  #field {
+    border: 1px solid red;
+    margin: 10px;
+    border-radius: 5px;
+    background-image: url(./field2.png);
+    background-size: 700px;
+    background-position: center;
+    position: relative;
+    width: 700px;
+    height: 400px;
+  }
+  
+  #ball {
+    border: 1px solid black;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: azure;
+    background-image: url(./basketball.png);
+    background-size: 103%;
+    background-position: center;
+    position: absolute;
+  }
+  
+  #control {
+    margin: 10px;
+  }
+  
+  button {
+    margin-right: 10px;
+  }
+  

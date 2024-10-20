@@ -17,46 +17,51 @@ const Calculator = () => {
   const [display, setDisplay] = useState('0');
   const [memory, setMemory] = useState(0);
   const [lastOperator, setLastOperator] = useState(null);
-  const [lastOperand, setLastOperand] = useState(null);
-  const [lastResult, setLastResult] = useState(null);
-  const [operatorPressed, setOperatorPressed] = useState(false);
-  const [equalPressed, setEqualPressed] = useState(false);
+  const [lastOperand, setLastOperand] = useState(null); // เก็บตัวเลขก่อนหน้า
+  const [lastResult, setLastResult] = useState(null); // เก็บผลลัพธ์ล่าสุด
+  const [operatorPressed, setOperatorPressed] = useState(false);// ตรวจการกดเครื่องหมาย
+  const [equalPressed, setEqualPressed] = useState(false);  // ตรวจการกดปุ่ม `=` หรือไม่
 
   useEffect(() => {
     clearDisplay();
   }, []);
 
+   // ฟังก์ชันเพิ่มค่าหรือตัวเลขลงบนหน้าจอ
   const appendToDisplay = (value) => {
-    if (display === '0' || operatorPressed) {
-      setDisplay(value);
-      setOperatorPressed(false);
+    if (display === '0' || operatorPressed) { // ถ้าแสดงผลเป็น '0' หรือมีการกดเครื่องหมาย
+      setDisplay(value);  // แสดงค่าที่ถูกกด
+      setOperatorPressed(false); // ลบสถานะการกดเครื่องหมาย
     } else {
-      setDisplay(display + value);
+      setDisplay(display + value); // ถ้าไม่ใช่ '0' หรือเครื่องหมายถูกกดแล้ว จะเพิ่มค่าใหม่ต่อท้าย
     }
   };
 
+ // ฟังก์ชันกดเครื่องหมาย
   const handleOperator = (operator) => {
-    const currentValue = parseFloat(display);
+    const currentValue = parseFloat(display); // แปลงค่าที่แสดงบนหน้าจอเป็นตัวเลข
     if (display === '' || display === '0') {
       setLastOperand(0);
     } else {
-      setLastOperand(currentValue);
+      setLastOperand(currentValue);  // ถ้ามีค่าให้เก็บเป็น lastOperand
     }
 
-    if (lastOperator && !operatorPressed) {
-      calculateResult();
+    if (lastOperator && !operatorPressed) { // ถ้ามีเครื่องหมายก่อนหน้าและยังไม่ได้กดเครื่องหมายใหม่
+      calculateResult();  // คำนวณผลลัพธ์
+      
     }
 
     setLastOperator(operator);
-    setOperatorPressed(true);
-    setEqualPressed(false);
+    setOperatorPressed(true); // บันทึกว่ากดเครื่องหมาย
+    setEqualPressed(false); // รีเซ็ตปุ่ม `=`
   };
 
+   // ฟังก์ชันclearMemory
   const clearMemory = () => {
     setMemory(0);
     clearDisplay();
   };
 
+  //ฟังก์ชันล้างล้างหน่วยความจำ
   const clearDisplay = () => {
     setDisplay('0');
     setLastOperator(null);
@@ -66,22 +71,25 @@ const Calculator = () => {
     setEqualPressed(false);
   };
 
+ // ฟังก์ชันลบตัวเลขล่าสุดบนหน้าจอ
   const deleteLast = () => {
     if (display.length > 1) {
-      setDisplay(display.slice(0, -1));
+      setDisplay(display.slice(0, -1)); // ลบตัวเลขตัวสุดท้ายออก
     } else {
       setDisplay('0');
     }
   };
 
+  // ฟังก์ชันคำนวณผลลัพธ์ตามเครื่องหมายที่ถูกกด
   const calculateResult = () => {
-    const currentValue = parseFloat(display);
+    const currentValue = parseFloat(display); // แปลงค่าปัจจุบันที่แสดงบนหน้าจอเป็นตัวเลข
 
-    if (lastOperator && lastOperand !== null) {
+    // คำนวณตามเครื่องหมายที่ถูกกด
+    if (lastOperator && lastOperand !== null) { 
       let result;
       switch (lastOperator) {
         case '+':
-          result = (lastResult !== null ? lastResult : lastOperand) + currentValue;
+          result = (lastResult !== null ? lastResult : lastOperand) + currentValue; //ถ้าเคยมีผลลัพธ์ให้บวกต่อจากผลลัพธ์ ถ้าไม่มีก็ใช้ตัวเลขก่อนหน้า
           break;
         case '-':
           result = (lastResult !== null ? lastResult : lastOperand) - currentValue;
@@ -90,8 +98,9 @@ const Calculator = () => {
           result = (lastResult !== null ? lastResult : lastOperand) * currentValue;
           break;
         case '÷':
-          if (currentValue === 0) {
+          if (currentValue === 0) { // ถ้าหารด้วย 0 แสดง 'Error'
             setDisplay('Error');
+      
             return;
           }
           result = (lastResult !== null ? lastResult : lastOperand) / currentValue;
@@ -102,19 +111,20 @@ const Calculator = () => {
 
       setDisplay(result.toString());
       setLastResult(result);
-      setLastOperand(equalPressed ? lastOperand : currentValue);
+      setLastOperand(equalPressed ? lastOperand : currentValue);// ถ้ากด `=` ใช้ตัวเลขเดิม ถ้าไม่ก็กำหนดตัวเลขปัจจุบัน
     }
 
     setOperatorPressed(true);
   };
 
+// ฟังก์ชันกดปุ่ม `=`
   const handleEqual = () => {
-    const currentValue = parseFloat(display);
-
-    if (!equalPressed) {
+    const currentValue = parseFloat(display); // แปลงค่าที่แสดงบนหน้าจอเป็นตัวเลข
+    // ถ้ายังไม่ได้กด `=` มาก่อน
+    if (!equalPressed) { 
       calculateResult();
-      setEqualPressed(true);
-    } else if (lastOperator && lastOperand !== null) {
+      setEqualPressed(true); // บันทึกว่ากดปุ่ม `=`
+    } else if (lastOperator && lastOperand !== null) {  // ถ้ากดแล้วให้คำนวณต่อไปตามเครื่องหมายเดิม
       let result = lastResult;
       switch (lastOperator) {
         case '+':
@@ -127,8 +137,7 @@ const Calculator = () => {
           result *= lastOperand;
           break;
         case '÷':
-          if (lastOperand === 0) {
-            setDisplay('Error');
+          if (lastOperand === 0) { 
             return;
           }
           result /= lastOperand;
@@ -141,6 +150,7 @@ const Calculator = () => {
     }
   };
 
+  // ฟังก์ชันรับค่าKeyboard
   const checkKeyboard = (e) => {
     switch (e.key) {
       case 'Escape':
@@ -174,6 +184,7 @@ const Calculator = () => {
     }
   };
 
+  //ปุ่มต่าง ๆ ของเครื่องคิดเลข
   useEffect(() => {
     window.addEventListener('keydown', checkKeyboard);
     return () => window.removeEventListener('keydown', checkKeyboard);

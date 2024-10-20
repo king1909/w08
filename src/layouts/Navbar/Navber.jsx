@@ -27,6 +27,16 @@ function Navber({ tab, setTab }) {
       </button>
       </Link>
 
+    {/* สร้างปุ่ม animation */}
+    <Link to = {'/animation'}>
+      <button className={
+          "btn " + (tab === "animation" ? "btn-primary" : "btn-outline-primary")
+        }
+        onClick={() => {setTab('animation')}}
+      >Animation
+      </button>
+      </Link>
+
     {/* สร้างปุ่ม components */}
       <Link to = {'/components'}>
       <button className={
@@ -54,6 +64,16 @@ function Navber({ tab, setTab }) {
         }
         onClick={() => {setTab('products')}}
       >Products
+      </button>
+      </Link>
+
+      {/* สร้างปุ่ม Carts */}
+      <Link to = {'/carts'}>
+      <button className={
+          "btn " + (tab === "carts" ? "btn-primary" : "btn-outline-primary")
+        }
+        onClick={() => {setTab('carts')}}
+      >Carts
       </button>
       </Link>
 

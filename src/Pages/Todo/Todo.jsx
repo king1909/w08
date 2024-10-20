@@ -23,59 +23,88 @@ function Todo() {
   const onlyWaitingRef = useRef()
 
   useEffect(() => {
-    const todosData = fetchTodos();
-    console.log(todosData); // ตรวจสอบข้อมูลที่ดึงออกมา 
-    setTodosRaw(todosData);
+    const todosData = fetchTodos();  // ดึงข้อมูล todos
+    console.log(todosData);  // ตรวจสอบข้อมูลที่ดึงออกมา
+    setTodosRaw(todosData);  // ตั้งค่า todosRaw ด้วยข้อมูลที่ดึงมา
     setOnlyWaiting(initOnlyWaiting);
     itemsPerPageRef.current.value = initItemsPerPage;
     setItemsPerPage(initItemsPerPage);
     onlyWaitingRef.current.checked = initOnlyWaiting;
   }, []);
 
+ // checked  onlyWaiting เปลี่ยน จะทำฟังก์ชันนี้
   useEffect(() => {
     if (onlyWaiting) {
-      setTodos(todosRaw.filter((todo) => !todo.completed))
+      //show onlyWaiting
+      setTodos(todosRaw.filter((todo) => !todo.completed));
     } else {
-      setTodos(todosRaw)
+      //show all
+      setTodos(todosRaw);
     }
-  }, [todosRaw, onlyWaiting])
+  }, [todosRaw, onlyWaiting, itemsPerPage]);
 
+  // select  per page
   useEffect(() => {
-    setNumPages(Math.ceil(todos.length / itemsPerPage))
+    setNumPages(Math.ceil(todos.length / itemsPerPage)) //เปลี่ยนค่าper page
   }, [todos, itemsPerPage])
 
+  //คำนวนหน้าปัจจุบัน ดูหน้าทั้งหมดเท่าไร
   useEffect(() => {
     if (numPages <= 0) setCurPage(0)
     else if (curPage === 0) setCurPage(1)
     else if (curPage > numPages) setCurPage(numPages)
   }, [numPages])
 
-  //consoleแสดงสเตจที่ถูกเปลื่ยน setหน้าที่เลือก
+  //consoleแสดงสเตจที่ถูกเปลื่ยน setหน้าที่เลือก per page
   useEffect(() => {
     console.log('itemsPerPage: ',itemsPerPage)
   }, [itemsPerPage])
 
+  //event handlers delete
+    function deleteClick(id,) {
+      setTodosRaw(todosRaw.filter( (todo) =>todo.id !== id))
+
+    }
+
+  // ฟังก์ชั่น waitingClick 
+    function waitingClick(id) {
+      const todoSelected = todosRaw.find((todo) => {
+        return todo.id === id
+      })
+      todoSelected.completed = true
+      setTodosRaw( [...todosRaw] )
+    }
 
   return (
     <div className='todo-container'>
 {/* filters */}
       <div className='todo-filters-container'>
+
+      {/* form-check form-switch */}
         <div className='form-check form-switch'>
           <input
             className='form-check-input'
             type='checkbox'
             role='switch'
             id='flexSwitchCheckChecked'
-            // checked
+            // checked Show only waiting
             onChange={(e) => {
               setOnlyWaiting(e.target.checked)
             }}
             ref={onlyWaitingRef}
           />
+
           <label className='form-check-label' htmlFor='flexSwitchCheckChecked'>
-            Show only waiting
+            Show only&nbsp;
+            <button className='btn btn-warning'>
+              waiting&nbsp;
+              <span className='bi bi-clock'></span>
+              </button>
+
           </label>
         </div>
+
+        {/* per page */}
         <select
           className='form-select'
           aria-label='Default select example'
@@ -98,26 +127,42 @@ function Todo() {
       <table className='table table-striped todo-table'>
         <thead className='table-dark'>
           <tr>
-            <th>ID</th>
+            <th style={{width:'10%'}}>ID</th>
             <th>Title</th>
             <th style={{ textAlign: 'right' }}>Completed</th>
           </tr>
         </thead>
-        <tbody>
 
-          {todos.map((todo) => {
+        <tbody>
+          {
+          // itemaPrePage = 5
+          // curPage = 1
+          // item (js) = [0....4] -> [min....max] 
+          // min = (curPage - 1) * itemsPerPage
+          // max = curPage * itemsPerPage - 1
+          //ฟังก์ชั่น แสดงรายการตามที่เลือก perpage
+            todos.filter((todo, index) => {
+
+              const min = (curPage - 1) * itemsPerPage
+              const max = curPage * itemsPerPage - 1
+
+              return index >= min && index <= max
+            })
+          
+          .map((todo) => {
             return (
               <tr key={todo.id}>
                 <td>
                   <span
                     className='badge bg-secondary'
-                    style={{ width: '2rem' }}
+                    style={{ width: '3rem' }}
                   >
                     {todo.id}
                   </span>
                 </td>
                 <td style={{ textAlign: 'left' }}>{todo.title}</td>
                 <td style={{ textAlign: 'right' }}>
+
               {/* ส่วน done waiting trash */}
                   {todo.completed ? (
                     <span className='badge bg-success'>
@@ -125,13 +170,20 @@ function Todo() {
                       <span className='bi bi-check'></span>
                     </span>
                   ) : (
-                    <button className='btn btn-warning'>
+                    <button className='btn btn-warning' onClick={() => {
+
+                      waitingClick(todo.id)
+
+                    }}>
                       waiting&nbsp;
                       <span className='bi bi-clock'></span>
                     </button>
                   )}
                   &nbsp;
-                  <button className='btn btn-danger'>
+                  {/* ปุ่มลบ */}
+                  <button className='btn btn-danger' onClick={ () => { 
+                    deleteClick(todo.id)
+                  } }>
                     <span className='bi bi-trash'></span>
                   </button>
                 </td>
@@ -143,6 +195,8 @@ function Todo() {
 
 {/* page control */}
       <div>
+
+      {/* ปุ่ม First */}
         <button
           className={
             'todo-space btn ' +
@@ -151,10 +205,12 @@ function Todo() {
           onClick={() => {
             setCurPage(1)
           }}
-          disabled={curPage <= 1}
+          disabled={curPage <= 1} //เมื่อหน้าเป็น 1 จะปิดการใช้งาน
         >
           First
         </button>
+
+        {/* ปุ่ม Previous */}
         <button
           className={
             'todo-space btn ' +
@@ -165,9 +221,13 @@ function Todo() {
         >
           Previous
         </button>
+
+        {/* ส่วนที่แสดง "/" */}
         <span className='todo-space'>
           {curPage}&nbsp;/&nbsp;{numPages}
         </span>
+
+         {/* ปุ่ม Next */}
         <button
           className={
             'todo-space btn ' +
@@ -180,6 +240,8 @@ function Todo() {
         >
           Next
         </button>
+
+        {/* ปุ่ม Last */}
         <button
           className={
             'todo-space btn ' +
