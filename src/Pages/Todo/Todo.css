@@ -12,6 +12,15 @@
   margin-bottom: 0.5rem;
 }
 
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-label {
+  margin-right: 10px;
+}
+
 .todo-table {
   border: 1px solid black;
 }
